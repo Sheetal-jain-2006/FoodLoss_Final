@@ -1,0 +1,6 @@
+Model,Accuracy,Macro_F1
+DummyClassifier,0.3368,0.3367336232857137
+RidgeClassifier,0.67085,0.5581849725272447
+DecisionTreeClassifier,0.6263,0.6203590994459609
+RandomForestClassifier,0.75415,0.7511435943277457
+GradientBoostingClassifier,0.81065,0.8104560092385045
