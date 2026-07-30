@@ -7,6 +7,7 @@ import streamlit as st
 from PIL import Image
 
 from src.recommendations import get_recommendations
+from src.train import ClassifierWrapper
 
 # Page Configuration
 st.set_page_config(
@@ -97,6 +98,7 @@ st.markdown("""
         margin-bottom: 10px;
         border-radius: 0 8px 8px 0;
         font-size: 0.95rem;
+        color: #333333;
     }
 </style>
 """, unsafe_allow_html=True)

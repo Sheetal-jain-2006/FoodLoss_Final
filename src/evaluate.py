@@ -13,6 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 from src.data_loader import load_raw_data, split_data
+from src.train import ClassifierWrapper
 
 def evaluate_pipeline(data_path="data/EuroCrop_agricultural_logistics_dataset.csv", models_dir="models", reports_dir="reports"):
     os.makedirs(reports_dir, exist_ok=True)

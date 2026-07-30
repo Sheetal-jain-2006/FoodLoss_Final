@@ -117,7 +117,9 @@ def train_pipeline(data_path="data/EuroCrop_agricultural_logistics_dataset.csv",
             subsample=0.9,
             colsample_bytree=0.9,
             random_state=42,
-            eval_metric="mlogloss"
+            eval_metric="mlogloss",
+            tree_method="hist",
+            device="cuda"
         )
     else:
         print("Warning: XGBoost is unavailable and will not be compared.")
@@ -129,7 +131,8 @@ def train_pipeline(data_path="data/EuroCrop_agricultural_logistics_dataset.csv",
             learning_rate=0.05,
             depth=6,
             random_seed=42,
-            verbose=False
+            verbose=50,
+            task_type="GPU"
         )
     else:
         print("Warning: CatBoost is unavailable and will not be compared.")
@@ -156,12 +159,8 @@ def train_pipeline(data_path="data/EuroCrop_agricultural_logistics_dataset.csv",
         trained_models[name] = model
         model_f1s[name] = f1
         
-    # Determine the best boosting model to tune between GradientBoosting and XGBoost
-    boosting_candidates = ['GradientBoostingClassifier']
-    if has_xgboost:
-        boosting_candidates.append('XGBClassifier')
-        
-    best_boosting_name = max(boosting_candidates, key=lambda x: model_f1s[x])
+    # Force XGBoost to ensure GPU acceleration is used for the heavy tuning phase
+    best_boosting_name = 'XGBClassifier' if has_xgboost else 'GradientBoostingClassifier'
     print(f"\nBest boosting model selected for hyperparameter tuning: {best_boosting_name}")
     
     # Define hyperparameter grid for RandomizedSearchCV
@@ -185,7 +184,9 @@ def train_pipeline(data_path="data/EuroCrop_agricultural_logistics_dataset.csv",
         }
         base_boosting_model = XGBClassifier(
             random_state=42,
-            eval_metric="mlogloss"
+            eval_metric="mlogloss",
+            tree_method="hist",
+            device="cuda"
         )
         
     print(f"Running RandomizedSearchCV on {best_boosting_name} (5-fold CV)...")
@@ -196,7 +197,8 @@ def train_pipeline(data_path="data/EuroCrop_agricultural_logistics_dataset.csv",
         scoring='f1_macro',
         cv=5,
         random_state=42,
-        n_jobs=-1
+        n_jobs=-1,
+        verbose=2
     )
     random_search.fit(X_train_clean, y_train_encoded)
     tuned_model = random_search.best_estimator_
